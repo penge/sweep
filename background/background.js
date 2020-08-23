@@ -1,13 +1,34 @@
-/* global chrome, console */
+/* global chrome, console, Promise */
 
-/*** MAIN LOGIC ***/
+
+/*** TIME LIMITS ****/
+
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const ONE_HOUR_MS = 60 * 60 * 1000;
+const ONE_MINUTE_MS = 60 * 1000;
+
+const getTimeLimit = () => new Promise((resolve) => {
+  chrome.storage.local.get(["days", "hours", "minutes"], local => {
+    const { days, hours, minutes } = local;
+
+    const limit =
+      (days || 0 * ONE_DAY_MS) +
+      (hours || 0 * ONE_HOUR_MS) +
+      (minutes || 0 * ONE_MINUTE_MS);
+
+    resolve(limit);
+  });
+});
+
+
+/*** TABS LOGIC ***/
 
 const openTabs = {};
-// const ONE_MINUTE = 0;
 
 const addTab = (id, url, title) => {
   console.log(`Adding ${id}`);
   openTabs[id] = {
+    id,
     url,
     title,
     date: new Date(), // current time of adding
@@ -23,15 +44,17 @@ const removeTab = (id) => {
   delete openTabs[id];
 };
 
-// const bookmarkTab = (id) => {
-//   if (!(id in openTabs)) {
-//     return;
-//   }
+const preflight = async () => {
+  const limit = await getTimeLimit();
+  const now = new Date();
 
-//   chrome.bookmarks.search("MyNewSpecial", (results) => {
-//     console.log(results);
-//   });
-// };
+  const filtered = Object.values(openTabs).filter(tab => {
+    return new Date(tab.date.getTime() + limit) <= now;
+  });
+
+  return filtered;
+};
+
 
 /*** EVENTS ***/
 
@@ -45,20 +68,17 @@ chrome.tabs.onCreated.addListener((tab) => addTab(tab.id, tab.url, tab.title));
 chrome.tabs.onUpdated.addListener((tab) => addTab(tab.id, tab.url, tab.title));
 chrome.tabs.onRemoved.addListener((tab) => removeTab(tab.id));
 
-/*** TOOLBAR ICON CLICK ***/
 
-// chrome.browserAction.onClicked.addListener(() => {
-//   const now = new Date();
-//   const keys = Object.keys(openTabs);
+/*** MESSAGES ***/
 
-//   for (const tabId of keys) {
-//     if (now < new Date(openTabs[tabId].getTime() + ONE_MINUTE)) {
-//       console.log("Skipping", tabId);
-//       continue;
-//     }
+chrome.runtime.onMessage.addListener(async (message) => {
+  if (message.type === "PREFLIGHT") {
+    const preflightTabs = await preflight();
+    const preflightTabsCount = preflightTabs.length;
 
-//     const parsedTabId = parseInt(tabId);
-//     bookmarkTab(parsedTabId);
-//     removeTab(parsedTabId);
-//   }
-// });
+    chrome.runtime.sendMessage({
+      type: "PREFLIGHT_RESPONSE",
+      count: preflightTabsCount
+    });
+  }
+});

@@ -1,15 +1,33 @@
 * {
   margin: 0;
   padding: 0;
+  color: black;
 }
 
 html {
   font-size: 24px;
-  background: black;
-  color: white;
 }
 
 body {
-  width: 300px;
+  width: 350px;
   padding: 1em;
+}
+
+#links {
+  display: flex;
+  justify-content: space-between;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 4px;
+  border: 1px solid #777;
+  padding: .3em;
+}
+
+a:hover {
+  border-color: transparent;
+  background: black;
+  color: white;
 }
