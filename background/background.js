@@ -1,6 +1,5 @@
 /* global chrome, console, Promise */
 
-
 /*** TIME LIMITS ****/
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -13,7 +12,7 @@ const getTimeLimit = () => new Promise((resolve) => {
 
     const limit =
       (days || 0 * ONE_DAY_MS) +
-      (hours || 0 * ONE_HOUR_MS) +
+      (hours || 1 * ONE_HOUR_MS) +
       (minutes || 0 * ONE_MINUTE_MS);
 
     resolve(limit);
