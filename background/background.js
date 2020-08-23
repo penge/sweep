@@ -120,10 +120,12 @@ const bookmark = async (folderName, tabs) => {
       continue;
     }
 
+    const yearNumber = tab.date.getFullYear();
     const monthNumber = tab.date.getMonth() + 1; // index starts from 0
     const dayNumber = tab.date.getDate();
 
-    const monthFolderId = await findOrCreateBookmarkFolder(mainFolderId, monthNumber.toString());
+    const yearFolderId = await findOrCreateBookmarkFolder(mainFolderId, yearNumber.toString());
+    const monthFolderId = await findOrCreateBookmarkFolder(yearFolderId, monthNumber.toString());
     const dayFolderId = await findOrCreateBookmarkFolder(monthFolderId, dayNumber.toString());
 
     const bookmark = {
