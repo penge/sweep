@@ -43,7 +43,7 @@ input {
   border: 1px solid silver;
   padding: .3em;
   margin-right: 1em;
-  transition: opacity .2s ease-in;
+  transition: color .4s ease-in;
 }
 
 input:last-of-type {
@@ -76,5 +76,5 @@ input[type="text"] {
 /* Loaded */
 
 body:not(.loaded) input {
-  opacity: 0;
+  color: white;
 }

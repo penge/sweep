@@ -17,6 +17,12 @@ folder.addEventListener("blur", () => {
   }
 });
 
+[folder, days, hours, minutes].forEach(input => {
+  input.addEventListener("input", () => {
+    save.innerText = "Save"; // reset button text after previous saving
+  });
+});
+
 [days, hours, minutes].forEach(input => {
   input.addEventListener("input", () => {
     const { min, max, value } = input;
@@ -45,6 +51,8 @@ save.addEventListener("click", (event) => {
     days: parseInt(days.value),
     hours: parseInt(hours.value),
     minutes: parseInt(minutes.value),
+  }, () => {
+    save.innerText = "Saved!";
   });
 });
 
