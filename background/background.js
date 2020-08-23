@@ -40,12 +40,12 @@ const getTimeLimit = () => new Promise((resolve) => {
 
 const openTabs = {};
 
-const addTab = (id, url, title) => {
-  console.log(`Adding ${id}`);
+const addTab = (id, title, url) => {
+  console.log(`Adding ${id}, ${title}, ${url}`);
   openTabs[id] = {
     id,
-    url,
     title,
+    url,
     date: new Date(), // current time of adding
   };
 };
@@ -70,17 +70,56 @@ const preflight = async () => {
   return filtered;
 };
 
-const bookmark = (tabs) => {
+const findOrCreateBookmarkFolder = (parentId, title) => new Promise((resolve) => {
+  chrome.bookmarks.getChildren(parentId, (nodes) => {
+    const existingNode = nodes.find(node => node.title === title);
+    if (existingNode) {
+      resolve(existingNode.id);
+      return;
+    }
+
+    const bookmark = {
+      parentId,
+      title,
+    };
+
+    chrome.bookmarks.create(bookmark, (result) => {
+      resolve(result.id);
+    });
+  });
+});
+
+const bookmark = async (folderName, tabs) => {
   if (!tabs.length) {
     return;
   }
 
-  tabs.forEach(tab => {
-    console.log(`Bookmarking ${tab.id}`);
-    // chrome.bookmarks.search("MyNewSpecial", (results) => {
-    //   console.log(results);
-    // });
+  // 1. Find or create main folder
+  const mainFolderId = await findOrCreateBookmarkFolder("1", folderName);
+  console.log(`Entry folder ${mainFolderId}`);
+
+  // 2. Find or create months subfolder
+  tabs.forEach(async tab => {
+    const monthNumber = tab.date.getMonth() + 1; // index starts from 0
+    const dayNumber = tab.date.getDate();
+
+    const monthFolderId = await findOrCreateBookmarkFolder(mainFolderId, monthNumber.toString());
+    const dayFolderId = await findOrCreateBookmarkFolder(monthFolderId, dayNumber.toString());
+
+    const bookmark = {
+      parentId: dayFolderId,
+      title: tab.title,
+      url: tab.url,
+    };
+
+    console.log("B", bookmark);
+
+    chrome.bookmarks.create(bookmark, (result) => {
+      console.log(`Bookmarking ${tab.id} under ${mainFolderId}/${monthFolderId}/${dayFolderId} as ${result.id}`);
+    });
   });
+
+  // 3. Have a beer ;)
 };
 
 
@@ -92,8 +131,8 @@ chrome.tabs.query({}, (tabs) => {
   });
 });
 
-chrome.tabs.onCreated.addListener((tab) => addTab(tab.id, tab.url, tab.title));
-chrome.tabs.onUpdated.addListener((tab) => addTab(tab.id, tab.url, tab.title));
+chrome.tabs.onCreated.addListener((tab) => addTab(tab.id, tab.title, tab.url));
+chrome.tabs.onUpdated.addListener((tab) => addTab(tab.id, tab.title, tab.url));
 chrome.tabs.onRemoved.addListener((tabId) => removeTab(tabId));
 
 
@@ -112,6 +151,9 @@ chrome.runtime.onMessage.addListener(async (message) => {
 
   if (message.type === "BOOKMARK") {
     const preflightTabs = await preflight();
-    bookmark(preflightTabs);
+    console.log(preflightTabs);
+    // chrome.storage.local.get(["folder"], async (local) => {
+    //   await bookmark(local.folder, preflightTabs);
+    // });
   }
 });
