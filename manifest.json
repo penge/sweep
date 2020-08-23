@@ -11,8 +11,7 @@
     "persistent": true
   },
   "browser_action": {
-    "default_icon": "icon128.png"
-  },
-  "minimum_chrome_version": "61",
-  "offline_enabled": true
+    "default_icon": "icon128.png",
+    "default_popup": "popup.html"
+  }
 }
