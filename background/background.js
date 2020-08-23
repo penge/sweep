@@ -1,5 +1,21 @@
 /* global chrome, console, Promise */
 
+/*** INSTALLATION ***/
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.get(["folder", "days", "hours", "minutes"], local => {
+    const items = {
+      folder: local.folder || "Sweep",
+      days: typeof local.days === "number" ? local.days : 0,
+      hours: typeof local.hours === "number" ? local.hours : 1,
+      minutes: typeof local.minutes === "number" ? local.minutes : 0,
+    };
+
+    chrome.storage.local.set(items);
+  });
+});
+
+
 /*** TIME LIMITS ****/
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -9,12 +25,7 @@ const ONE_MINUTE_MS = 60 * 1000;
 const getTimeLimit = () => new Promise((resolve) => {
   chrome.storage.local.get(["days", "hours", "minutes"], local => {
     const { days, hours, minutes } = local;
-
-    const limit =
-      (days || 0 * ONE_DAY_MS) +
-      (hours || 1 * ONE_HOUR_MS) +
-      (minutes || 0 * ONE_MINUTE_MS);
-
+    const limit = (days * ONE_DAY_MS) + (hours * ONE_HOUR_MS) + (minutes * ONE_MINUTE_MS);
     resolve(limit);
   });
 });

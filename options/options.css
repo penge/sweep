@@ -28,6 +28,10 @@ h1 > img {
   margin-bottom: 1em;
 }
 
+#controls > .group:last-of-type {
+  margin-bottom: 2em;
+}
+
 label {
   font-weight: bold;
 }
@@ -39,6 +43,7 @@ input {
   border: 1px solid silver;
   padding: .3em;
   margin-right: 1em;
+  transition: opacity .2s ease-in;
 }
 
 input:last-of-type {
@@ -66,4 +71,10 @@ input[type="text"] {
   border-color: transparent;
   background: black;
   color: white;
+}
+
+/* Loaded */
+
+body:not(.loaded) input {
+  opacity: 0;
 }
