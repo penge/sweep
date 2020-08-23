@@ -24,22 +24,33 @@ h1 > img {
   align-items: flex-start;
 }
 
+#controls > .group {
+  margin-bottom: 1em;
+}
+
 label {
   font-weight: bold;
 }
 
 input {
   font-size: inherit;
-  width: 70px;
-  margin-right: 1em;
   border-radius: 4px;
   outline: none;
   border: 1px solid silver;
   padding: .3em;
+  margin-right: 1em;
 }
 
 input:last-of-type {
   margin-right: 0;
+}
+
+input[type="number"] {
+  width: 70px;
+}
+
+input[type="text"] {
+  width: 250px;
 }
 
 #save {
