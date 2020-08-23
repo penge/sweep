@@ -4,14 +4,19 @@
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.get(["folder", "days", "hours", "minutes"], local => {
-    const items = {
-      folder: local.folder || "Sweep",
-      days: typeof local.days === "number" ? local.days : 0,
-      hours: typeof local.hours === "number" ? local.hours : 1,
-      minutes: typeof local.minutes === "number" ? local.minutes : 0,
-    };
+    const { folder, days, hours, minutes } = local;
 
-    chrome.storage.local.set(items);
+    const validFolder = folder || "Sweep";
+    const validDays = (typeof days === "number" && days >= 0 && days <= 30) ? days : 0;
+    const validHours = (typeof hours === "number" && hours >= 0 && hours <= 23) ? hours : 0;
+    const validMinutes = (typeof minutes === "number" && minutes >= 0 && minutes <= 59) ? minutes : 0;
+
+    chrome.storage.local.set({
+      folder: validFolder,
+      days: validDays,
+      hours: validHours,
+      minutes: validMinutes,
+    });
   });
 });
 
