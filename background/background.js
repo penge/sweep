@@ -127,7 +127,7 @@ const bookmark = async (folderName, tabs) => {
 
 chrome.tabs.query({}, (tabs) => {
   tabs.forEach(tab => {
-    addTab(tab.id);
+    addTab(tab.id, tab.title, tab.url);
   });
 });
 
@@ -151,9 +151,8 @@ chrome.runtime.onMessage.addListener(async (message) => {
 
   if (message.type === "BOOKMARK") {
     const preflightTabs = await preflight();
-    console.log(preflightTabs);
-    // chrome.storage.local.get(["folder"], async (local) => {
-    //   await bookmark(local.folder, preflightTabs);
-    // });
+    chrome.storage.local.get(["folder"], async (local) => {
+      await bookmark(local.folder, preflightTabs);
+    });
   }
 });
