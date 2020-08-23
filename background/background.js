@@ -50,13 +50,13 @@ const addTab = (id, url, title) => {
   };
 };
 
-const removeTab = (id) => {
-  if (!(id in openTabs)) {
+const removeTab = (tabId) => {
+  if (!(tabId in openTabs)) {
     return;
   }
 
-  console.log(`Removing ${id}`);
-  delete openTabs[id];
+  console.log(`Removing ${tabId}`);
+  delete openTabs[tabId];
 };
 
 const preflight = async () => {
@@ -68,6 +68,19 @@ const preflight = async () => {
   });
 
   return filtered;
+};
+
+const bookmark = (tabs) => {
+  if (!tabs.length) {
+    return;
+  }
+
+  tabs.forEach(tab => {
+    console.log(`Bookmarking ${tab.id}`);
+    // chrome.bookmarks.search("MyNewSpecial", (results) => {
+    //   console.log(results);
+    // });
+  });
 };
 
 
@@ -95,5 +108,10 @@ chrome.runtime.onMessage.addListener(async (message) => {
       type: "PREFLIGHT_RESPONSE",
       count: preflightTabsCount
     });
+  }
+
+  if (message.type === "BOOKMARK") {
+    const preflightTabs = await preflight();
+    bookmark(preflightTabs);
   }
 });

@@ -12,7 +12,7 @@ const init = (countValue) => {
   if (countValue > 0) {
     sweep.addEventListener("click", (event) => {
       event.preventDefault();
-      chrome.runtime.sendMessage({ type: "SWEEP" });
+      chrome.runtime.sendMessage({ type: "BOOKMARK" });
       window.close();
     });
 
