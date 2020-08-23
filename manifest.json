@@ -1,17 +1,23 @@
 {
   "manifest_version": 2,
-  "name": "Unread",
-  "description": "Closes unread tabs and adds them to bookmarks.",
+  "name": "Sweep",
+  "description": "Closes long-time unused tabs and adds them to bookmarks.",
   "version": "1.0",
-  "icons": { "128": "icon128.png" },
-  "options_page": "options.html",
-  "permissions": ["storage", "bookmarks"],
+  "icons": {
+    "128": "images/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "bookmarks"
+  ],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background/background.js"
+    ],
     "persistent": true
   },
   "browser_action": {
-    "default_icon": "icon128.png",
-    "default_popup": "popup.html"
+    "default_icon": "images/icon128.png",
+    "default_popup": "popup/popup.html"
   }
 }

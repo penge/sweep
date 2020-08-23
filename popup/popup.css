@@ -1,0 +1,15 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 24px;
+  background: black;
+  color: white;
+}
+
+body {
+  width: 300px;
+  padding: 1em;
+}

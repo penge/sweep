@@ -3,7 +3,7 @@
 /*** MAIN LOGIC ***/
 
 const openTabs = {};
-const ONE_MINUTE = 0;
+// const ONE_MINUTE = 0;
 
 const addTab = (id, url, title) => {
   console.log(`Adding ${id}`);
@@ -23,15 +23,15 @@ const removeTab = (id) => {
   delete openTabs[id];
 };
 
-const bookmarkTab = (id) => {
-  if (!(id in openTabs)) {
-    return;
-  }
+// const bookmarkTab = (id) => {
+//   if (!(id in openTabs)) {
+//     return;
+//   }
 
-  chrome.bookmarks.search("MyNewSpecial", (results) => {
-    console.log(results);
-  });
-};
+//   chrome.bookmarks.search("MyNewSpecial", (results) => {
+//     console.log(results);
+//   });
+// };
 
 /*** EVENTS ***/
 
