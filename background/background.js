@@ -40,7 +40,18 @@ const getTimeLimit = () => new Promise((resolve) => {
 
 const openTabs = {};
 
+const canBookmark = (tab) =>
+  tab.title &&
+  tab.url &&
+  tab.title !== "New Title" &&
+  tab.url.includes("soundcloud.com") === false;
+
 const addTab = (id, title, url) => {
+  if (!canBookmark({ title, url })) {
+    removeTab(id);
+    return;
+  }
+
   console.log(`Adding ${id}, ${title}, ${url}`);
   openTabs[id] = {
     id,
@@ -73,8 +84,10 @@ const preflight = async () => {
 const findOrCreateBookmarkFolder = (parentId, title) => new Promise((resolve) => {
   chrome.bookmarks.getChildren(parentId, (nodes) => {
     const existingNode = nodes.find(node => node.title === title);
-    if (existingNode) {
-      resolve(existingNode.id);
+    const existingNodeId = existingNode && existingNode.id;
+
+    if (existingNodeId) {
+      resolve(existingNodeId);
       return;
     }
 
@@ -99,7 +112,14 @@ const bookmark = async (folderName, tabs) => {
   console.log(`Entry folder ${mainFolderId}`);
 
   // 2. Find or create months subfolder
-  tabs.forEach(async tab => {
+  for (let index = 0; index < tabs.length; index += 1) {
+    const tab = tabs[index];
+
+    if (!canBookmark(tab)) {
+      removeTab(tab.id);
+      continue;
+    }
+
     const monthNumber = tab.date.getMonth() + 1; // index starts from 0
     const dayNumber = tab.date.getDate();
 
@@ -112,12 +132,13 @@ const bookmark = async (folderName, tabs) => {
       url: tab.url,
     };
 
-    console.log("B", bookmark);
-
     chrome.bookmarks.create(bookmark, (result) => {
       console.log(`Bookmarking ${tab.id} under ${mainFolderId}/${monthFolderId}/${dayFolderId} as ${result.id}`);
     });
-  });
+
+    removeTab(tab.id);
+    chrome.tabs.remove(tab.id);
+  }
 
   // 3. Have a beer ;)
 };
