@@ -44,6 +44,7 @@ const canBookmark = (tab) =>
   tab.title &&
   tab.url &&
   tab.title !== "New Title" &&
+  tab.url.includes("http") === true &&
   tab.url.includes("soundcloud.com") === false;
 
 const addTab = (id, title, url) => {
@@ -155,7 +156,7 @@ chrome.tabs.query({}, (tabs) => {
 });
 
 chrome.tabs.onCreated.addListener((tab) => addTab(tab.id, tab.title, tab.url));
-chrome.tabs.onUpdated.addListener((tab) => addTab(tab.id, tab.title, tab.url));
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => addTab(tab.id, tab.title, tab.url));
 chrome.tabs.onRemoved.addListener((tabId) => removeTab(tabId));
 
 
