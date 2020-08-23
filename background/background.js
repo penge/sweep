@@ -65,7 +65,7 @@ chrome.tabs.query({}, (tabs) => {
 
 chrome.tabs.onCreated.addListener((tab) => addTab(tab.id, tab.url, tab.title));
 chrome.tabs.onUpdated.addListener((tab) => addTab(tab.id, tab.url, tab.title));
-chrome.tabs.onRemoved.addListener((tab) => removeTab(tab.id));
+chrome.tabs.onRemoved.addListener((tabId) => removeTab(tabId));
 
 
 /*** MESSAGES ***/

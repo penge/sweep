@@ -4,19 +4,29 @@ const count = document.getElementById("count");
 const sweep = document.getElementById("sweep");
 const options = document.getElementById("options");
 
+/*** INIT ***/
+
 const init = (countValue) => {
   count.innerText = countValue;
 
-  sweep.addEventListener("click", (event) => {
-    event.preventDefault();
-    window.close();
-  });
+  if (countValue > 0) {
+    sweep.addEventListener("click", (event) => {
+      event.preventDefault();
+      chrome.runtime.sendMessage({ type: "SWEEP" });
+      window.close();
+    });
+
+    sweep.classList.remove("hide");
+  }
 
   options.addEventListener("click", (event) => {
     event.preventDefault();
     chrome.tabs.create({ url: "/options/options.html" });
   });
 };
+
+
+/*** PREFLIGHT ***/
 
 chrome.runtime.sendMessage({ type: "PREFLIGHT" });
 
